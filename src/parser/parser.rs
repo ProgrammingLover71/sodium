@@ -29,7 +29,6 @@ impl<'a> Parser<'a> {
 
     fn next(&mut self) {
         self.current = self.lexer.get_token();
-        println!("Token: {:?}", self.current);
     }
 
     fn match_token(&mut self, t_type: token::TokenType, err: Error) -> Result<(), Error> {
@@ -238,7 +237,6 @@ impl<'a> Parser<'a> {
 
 
     pub fn statement(&mut self) -> Result<Option<ast::NodeId>, Error> {
-        println!("Current token: {:?}", self.current);
 
         match self.current.t_type {
             token::TokenType::KReturn => {

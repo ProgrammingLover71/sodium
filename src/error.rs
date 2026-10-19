@@ -6,7 +6,7 @@ pub enum ErrorType {
     InvalidSyntaxError,
     InvalidLiteralError,
 
-    StackUnderflowError,
+    InvalidILError,
     TypeError,
     ValueError,
 
@@ -33,7 +33,7 @@ impl fmt::Display for ErrorType {
         match self {
             ErrorType::InvalidSyntaxError => write!(f, "InvalidSyntaxError"),
             ErrorType::InvalidLiteralError => write!(f, "InvalidLiteralError"),
-            ErrorType::StackUnderflowError => write!(f, "StackUnderflowError"),
+            ErrorType::InvalidILError => write!(f, "InvalidILError"),
             ErrorType::TypeError => write!(f, "TypeError"),
             ErrorType::ValueError => write!(f, "ValueError"),
             ErrorType::NameError => write!(f, "NameError")

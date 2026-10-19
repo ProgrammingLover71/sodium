@@ -1,35 +1,50 @@
+use crate::parser::ast;
+
 mod error;
 mod lexer;
 mod parser;
-
 mod sil;
+mod sil_generator;
 
-use std::fmt::Error;
+// let mut b = sil::ILBuilder::new(false);
 
-fn main() -> Result<(), Error> {
-	let mut b = sil::ILBuilder::new();
+// let foo_id = b.define_function(
+// 	String::from("foo"), 
+// 	vec![], 
+// 	sil::Type::Int64
+// );
+// b.set_current_function(foo_id);
 
-	let foo_id = b.define_function(
-		String::from("foo"), 
-		vec![], 
-		sil::Type::Int64
-	);
-	b.set_current_function(foo_id);
+// let foo_bb0 = b.make_entry_block(foo_id);
 
-	let foo_bb0 = b.make_entry_block(foo_id);
+// let res: Result<(), error::Error> = {
+// 	let v0 = b.const_i64(foo_bb0, 5)?;
+// 	let v1 = b.const_i64(foo_bb0, 7)?;
+// 	let v2 = b.add(foo_bb0, v0, v1)?;
+// 	let v3 = b.call(foo_bb0, v2, vec![v2])?;
+// 	b.ret(foo_bb0, v3)?;
 
-	{
-		let v0 = b.const_i64(foo_bb0, 5);
-		let v1 = b.const_i64(foo_bb0, 7);
-		let v2 = b.add(foo_bb0, v0, v1);
-		let v3 = b.load_builtin(foo_bb0, 0u32);
-		let v4 = b.call(foo_bb0, v3, vec![v2]);
-		b.ret(foo_bb0, v4);
-	}
+// 	Ok(())
+// };
 
-	let foo = b.get_function(foo_id);
+// let foo = b.get_function(foo_id);
 
-	println!("{}", foo);
+// println!("{}", foo?);
+
+// Ok(())
+
+fn main() -> Result<(), error::Error> {
+	let src = String::from("return 1 + 1");
+
+	let lexer = lexer::Lexer::new(src);
+
+	let mut arena = ast::NodeArena::new();
+	let mut parser = parser::Parser::new(lexer, &mut arena);
+	let program = parser.program()?;
+
+	println!("{:?}", program);
+
+	let sil_gen = sil_generator::SILGenerator::new(&program, false);
 
 	Ok(())
 }

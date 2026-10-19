@@ -2,7 +2,7 @@ use std::fmt;
 
 
 #[derive(Debug)]
-pub enum Instruction {
+pub enum InstructionType {
     ConstI64 {
         dst: u32,
         value: i64
@@ -29,11 +29,13 @@ pub enum Instruction {
         callee: u32,
         args: Vec<u32>
     },
+}
 
-    LoadBuiltin {
-        dst: u32,
-        id: u32
-    },
+#[derive(Debug)]
+pub struct Instruction {
+    pub i_typ: InstructionType,
+    pub i_ln: u32,
+    pub i_col: u32
 }
 
 
@@ -45,17 +47,23 @@ pub enum Terminator {
 }
 
 
-impl fmt::Display for Instruction {
+impl fmt::Display for InstructionType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::ConstI64 { dst, value } => write!(f, "%{} = const.i64 {}", dst, value)?,
             Self::ConstF64 { dst, value } => write!(f, "%{} = const.f64 {}", dst, value)?,
             Self::Add { dst, lhs, rhs } => write!(f, "%{} = add %{}, %{}", dst, lhs, rhs)?,
             Self::Assign { dst, src } => write!(f, "%{} = %{}", dst, src)?,
-            Self::Call { dst, callee, args } => write!(f, "%{} = call %{} {:?}", dst, callee, args)?,
-            Self::LoadBuiltin { dst, id } => write!(f, "%{} = ldbltin {}", dst, id)?,
+            Self::Call { dst, callee, args } => write!(f, "%{} = call %{} {:?}", dst, callee, args)?
         }
 
+        Ok(())
+    }
+}
+
+impl fmt::Display for Instruction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.i_typ)?;
         Ok(())
     }
 }
