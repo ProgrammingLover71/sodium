@@ -39,12 +39,16 @@ fn main() -> Result<(), error::Error> {
 	let lexer = lexer::Lexer::new(src);
 
 	let mut arena = ast::NodeArena::new();
-	let mut parser = parser::Parser::new(lexer, &mut arena);
+	let parser = parser::Parser::new(lexer, &mut arena);
 	let program = parser.program()?;
 
 	println!("{:?}", program);
 
-	let sil_gen = sil_generator::SILGenerator::new(&program, false);
+	let mut sil_gen = sil_generator::SILGenerator::new(&program, false);
+	let (ilb, f_main_id) = sil_gen.compile()?;
+
+	let f_main = ilb.get_function(f_main_id)?;
+	println!("{}", f_main);
 
 	Ok(())
 }
