@@ -106,7 +106,7 @@ impl<'a> SILGenerator<'a> {
 
         match node.n_type {
             ast::AstNodeType::IntLiteral { value } => {
-                let loc = self.il_builder.const_i64(current_block_id, value)?;
+                let loc = self.il_builder.const_i32(current_block_id, value)?;
                 Ok(loc)
             }
 

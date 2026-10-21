@@ -10,7 +10,7 @@ pub struct NodeId(pub u32);
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AstNodeType {
     IntLiteral {
-        value: i64
+        value: i32
     },
 
     Ident {

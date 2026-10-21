@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub enum Type<'a> {
-    Int64,
-    Float64,
+    Int32,
+    Float32,
     Box(&'a Type<'a>),
     None
 }

@@ -1,16 +1,19 @@
 use crate::parser::ast;
 
+mod codegen;
 mod error;
 mod lexer;
 mod parser;
 mod sil;
-mod sil_generator;
+mod silgen;
+
+use std::mem;
 
 // let mut b = sil::ILBuilder::new(false);
 
 // let foo_id = b.define_function(
-// 	String::from("foo"), 
-// 	vec![], 
+// 	String::from("foo"),
+// 	vec![],
 // 	sil::Type::Int64
 // );
 // b.set_current_function(foo_id);
@@ -34,21 +37,28 @@ mod sil_generator;
 // Ok(())
 
 fn main() -> Result<(), error::Error> {
-	let src = String::from("return 1 + 1");
+    let src = String::from("return 63 + 45 + 12");
 
-	let lexer = lexer::Lexer::new(src);
+    let lexer = lexer::Lexer::new(src);
 
-	let mut arena = ast::NodeArena::new();
-	let parser = parser::Parser::new(lexer, &mut arena);
-	let program = parser.program()?;
+    let mut arena = ast::NodeArena::new();
+    let parser = parser::Parser::new(lexer, &mut arena);
+    let program = parser.program()?;
 
-	println!("{:?}", program);
+    println!("{:?}", program);
 
-	let mut sil_gen = sil_generator::SILGenerator::new(&program, false);
-	let (ilb, f_main_id) = sil_gen.compile()?;
+    let mut sil_gen = silgen::SILGenerator::new(&program, false);
+    let (ilb, f_main_id) = sil_gen.compile()?;
 
-	let f_main = ilb.get_function(f_main_id)?;
-	println!("{}", f_main);
+    let f_main = ilb.get_function(f_main_id)?;
+    println!("{}", f_main);
 
-	Ok(())
+    let cgen = codegen::Codegen::new();
+    let (main_buf, main_off) = cgen.compile_function(f_main);
+    let main_p = main_buf.ptr(main_off);
+
+    let main: extern "C" fn() -> i32 = unsafe { mem::transmute(main_p) };
+    println!("{}", main());
+
+    Ok(())
 }

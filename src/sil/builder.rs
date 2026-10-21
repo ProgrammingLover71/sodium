@@ -213,11 +213,11 @@ impl<'a> ILBuilder<'a> {
         self.current_var_id - 1
     }
 
-    pub fn const_i64(&mut self, block_id: OptId, value: i64) -> Result<u32, error::Error> {
+    pub fn const_i32(&mut self, block_id: OptId, value: i32) -> Result<u32, error::Error> {
         let dst = self.get_new_var_id();
 
         let inst = inst::Instruction {
-            i_typ: inst::InstructionType::ConstI64 { dst, value },
+            i_typ: inst::InstructionType::ConstI32 { dst, value },
             i_ln: 0,
             i_col: 0,
         };
@@ -227,18 +227,18 @@ impl<'a> ILBuilder<'a> {
             inst,
             Some(types::TypeInfo {
                 var: dst,
-                typ: types::Type::Int64,
+                typ: types::Type::Int32,
             }),
         )?;
 
         Ok(dst)
     }
 
-    pub fn const_f64(&mut self, block_id: OptId, value: f64) -> Result<u32, error::Error> {
+    pub fn const_f32(&mut self, block_id: OptId, value: f32) -> Result<u32, error::Error> {
         let dst = self.get_new_var_id();
 
         let inst = inst::Instruction {
-            i_typ: inst::InstructionType::ConstF64 { dst, value },
+            i_typ: inst::InstructionType::ConstF32 { dst, value },
             i_ln: 0,
             i_col: 0,
         };
@@ -248,7 +248,7 @@ impl<'a> ILBuilder<'a> {
             inst,
             Some(types::TypeInfo {
                 var: dst,
-                typ: types::Type::Float64,
+                typ: types::Type::Float32,
             }),
         )?;
         Ok(dst)

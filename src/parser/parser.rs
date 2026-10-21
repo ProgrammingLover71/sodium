@@ -63,7 +63,7 @@ impl<'a> Parser<'a> {
         match self.current.t_type {
             token::TokenType::Int => {
                 // .unwrap() here is safe, Int tokens always have a valid int associated with them
-                let val = self.current.t_value.parse::<i64>();
+                let val = self.current.t_value.parse::<i32>();
                 let i_val = match val {
                     Ok(int_val) => int_val,
                     Err(_) => {
