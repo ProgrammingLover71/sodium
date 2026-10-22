@@ -1,11 +1,13 @@
 use crate::parser::ast;
 
-mod codegen;
 mod error;
 mod lexer;
 mod parser;
 mod sil;
 mod silgen;
+mod codegen;
+
+use codegen::Allocator;
 
 use std::mem;
 
@@ -53,11 +55,24 @@ fn main() -> Result<(), error::Error> {
     let f_main = ilb.get_function(f_main_id)?;
     println!("{}", f_main);
 
-    let cgen = codegen::Codegen::new();
-    let (main_buf, main_off) = cgen.compile_function(f_main);
+	let mut alloc = codegen::DefaultAllocator::new();
+    let mut cgen = codegen::Codegen::<codegen::DefaultAllocator>::new(&mut alloc);
+    let (main_buf, main_off) = cgen.compile_function(f_main).unwrap();
     let main_p = main_buf.ptr(main_off);
 
-    let main: extern "C" fn() -> i32 = unsafe { mem::transmute(main_p) };
+	let code = main_buf.as_ref();
+
+	for (i, byte) in code.iter().enumerate() {
+		print!("{:02X} ", byte);
+
+		if (i + 1) % 16 == 0 {
+			println!();
+		}
+	}
+
+	println!();
+
+    let main: extern "C" fn() -> i64 = unsafe { mem::transmute(main_p) };
     println!("{}", main());
 
     Ok(())

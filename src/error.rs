@@ -7,6 +7,7 @@ pub enum ErrorType {
     InvalidLiteralError,
 
     InvalidILError,
+    CodegenError,
     TypeError,
     ValueError,
 
@@ -34,6 +35,7 @@ impl fmt::Display for ErrorType {
             ErrorType::InvalidSyntaxError => write!(f, "InvalidSyntaxError"),
             ErrorType::InvalidLiteralError => write!(f, "InvalidLiteralError"),
             ErrorType::InvalidILError => write!(f, "InvalidILError"),
+            ErrorType::CodegenError => write!(f, "CodegenError"),
             ErrorType::TypeError => write!(f, "TypeError"),
             ErrorType::ValueError => write!(f, "ValueError"),
             ErrorType::NameError => write!(f, "NameError")
