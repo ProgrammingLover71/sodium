@@ -50,14 +50,14 @@ impl<'a, Alloc: regalloc::Allocator> Codegen<'a, Alloc> {
         match inst.i_typ {
             sil::inst::InstructionType::ConstI32 { dst, value } => {
                 dynasm!(asm
-                    ; mov Rq(self.get_reg(dst)), QWORD value as i64
+                    ; mov Rd(self.get_reg(dst)), DWORD value as i32
                 );
             }
 
             sil::inst::InstructionType::Add { dst, lhs, rhs } => {
                 dynasm!(asm
-                    ; mov Rq(self.get_reg(dst)), Rq(self.get_reg(lhs))
-                    ; add Rq(self.get_reg(dst)), Rq(self.get_reg(rhs))
+                    ; mov Rd(self.get_reg(dst)), Rd(self.get_reg(lhs))
+                    ; add Rd(self.get_reg(dst)), Rd(self.get_reg(rhs))
                 );
                 self.free_reg(lhs)?;
                 self.free_reg(rhs)?;
@@ -80,7 +80,7 @@ impl<'a, Alloc: regalloc::Allocator> Codegen<'a, Alloc> {
         match term {
             sil::inst::Terminator::Return { src } => {
                 dynasm!(asm
-                    ; mov rax, Rq(self.get_reg(*src))
+                    ; mov eax, Rd(self.get_reg(*src))
                     ; ret
                 );
                 self.free_reg(*src)?;

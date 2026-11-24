@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::error;
+use crate::error::{self, Error};
 
 pub trait Allocator {
     fn new() -> Self;
@@ -36,24 +36,35 @@ impl Allocator for DefaultAllocator {
         }
     }
 
-    // TODO: Change the assert!'s to Err(...)'s
     fn free(&mut self, local: u32) -> Result<(), error::Error> {
-        assert!(
-            self.reg_map.contains_key(&local),
-            "Unallocated register {}", local
-        );
+        if !self.reg_map.contains_key(&local) {
+            return Err(Error {
+                pe_line: 0,
+                pe_col: 0,
+                pe_type: error::ErrorType::CodegenError,
+                pe_msg: format!("Unallocated register {}", local)
+            });
+        }
 
         let reg = self.reg_map.get(&local).unwrap();
 
-        assert!(
-            !self.free_regs.contains(reg),
-            "Register {} was double-freed", reg
-        );
+        if self.free_regs.contains(reg) {
+            return Err(Error {
+                pe_line: 0,
+                pe_col: 0,
+                pe_type: error::ErrorType::CodegenError,
+                pe_msg: format!("Register {} was double-freed", reg)
+            });
+        }
 
-        assert!(
-            *reg < 16,
-            "Invalid register ID {}", reg
-        );
+        if *reg >= 16 {
+            return Err(Error {
+                pe_line: 0,
+                pe_col: 0,
+                pe_type: error::ErrorType::CodegenError,
+                pe_msg: format!("Invalid register ID {}", reg)
+            });
+        }
 
         self.free_regs.push(*reg);
         Ok(())
