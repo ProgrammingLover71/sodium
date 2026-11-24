@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::error;
+use crate::error::{self, Error};
 
 pub trait Allocator {
     fn new() -> Self;
